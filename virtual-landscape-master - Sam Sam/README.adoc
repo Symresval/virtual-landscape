@@ -1,0 +1,392 @@
+= Rapport Virtual-Landscape
+
+Rédigé par : Samy le 16 mai 2020.
+
+IMPORTANT: lien github du projet : https://github.com/lenygerance/Virtual-Landscape.git[Virtual-Landscape]
+
+== Sommaire
+* Representation Global 
+** Choix du dessin 
+** Réglage des parametres par défault
+
+
+
+* Objets dessinés
+** Mer
+** Lune
+** Sous-Marin
+** Katana & Fruit
+
+*Conclusion
+
+
+.Représentation Global
+****
+****
+image::https://cdn.discordapp.com/attachments/1105886698497396797/1108144178786992228/image.png[]
+
+Choix du dessin::
+J'ai représenté les objets importants qui accompagnent les aventures du celebre personage du nom de Trafalgar Law de l'oeuvre One piece dont son fruit en forme de coeur, son katana et son sousmarin  :
++
+image::https://cdn.discordapp.com/attachments/1105886698497396797/1108108666764279838/image.png[]
++
+
+Réglage des parametres par défault::
+Tous ces Elements représentés partent de paramétres par défaults puis modifiés depuis le fichier Javascript "Triangle" que j'ai aussi modifiés pour l'utiliser comme fichier de depart pour chaque nouvelle création.
++
+`Voici les paramètres par défaults:`
++
+    import { AbstractForm } from './AbstractForm.js'; //A modifier avec le bon nom de fichier la valeurs où écrit { AbstractForm }
+
+    /**
+    * Déssine un triangle
+    * Fichier exemple
+    * modifier avec le bon nom de fichiers les valeurs où sont écrit triangle
+    */
+    export class Triangle extends AbstractForm {
+  //  Valeur par défault pour éviter les erreurs lors d'argurments vides
+  constructor(
+    x = 0,
+    y = 0,
+    width = 0,
+    height = 0,
+    fillColor = '',
+    strokeColor = '',
+    strokeWidth = 2,
+    pesenteur = false,
+    ordreConstruction = 100
+  ) {
+    super(x, y, width, height, fillColor, strokeColor, strokeWidth, pesenteur, ordreConstruction)
+  }
+
+
+  /**
+   * Dessine la forme spécifique à cette classe
+   * @param ctx contexte 2D du canvas
+   */
+  draw(ctx) {
+    ctx.save()
+
+    // Style
+    ctx.fillStyle = this.fillColor
+    ctx.lineWidth = this.strokeWidth
+
+    // Debut
+    ctx.beginPath()
+    ctx.strokeStyle = this.strokeColor
+
+    // pousse l'objet au bas de l'écran (avec pesanteur)
+    let new_y = (this.pesanteur) ? ctx.canvas.height - this.height : this.y
+    
+    //Ici modifié pour que l'objet s'affiche sans pesanteur
+    let new_y = this.y
+
+    //supprimer un des codes pesenteur au-dessus quand son opposé est choisis
+
+    // un peu d'ombre pour les triangles
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
+    ctx.shadowBlur = 2;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+
+    //code exemple
+    // triangle avec une base
+    ctx.moveTo(this.x + this.width / 2, new_y)
+    ctx.lineTo(this.right, new_y + this.height)
+    ctx.lineTo(this.x, new_y + this.height)
+
+    ctx.closePath()
+
+   
+    ctx.fill()
+    ctx.stroke()
+
+    
+    ctx.restore()
+  }
+
+  /**
+   * get array of forms
+   * @return {[Triangle,...]}     //A modifier avec le bon nom
+   */
+  static buildForms() {
+    const myTriangle = new Triangle(0, 0, 0, 0, 'gold', '', 2, false, 100) //a modifier apres le dessin fini
+    let max = ~~(Math.random() * 0) + 1 // Default : Objet apparait seul
+    let forms = []
+    for (let i = 0; i < max; i++) {
+      forms.push(
+        new Triangle(
+          myTriangle.x,
+          myTriangle.y,
+          myTriangle.width,
+          myTriangle.height,
+          myTriangle.fillColor,
+          myTriangle.strokeColor,
+          '',
+          i % 2 === 0 // pesenteur une fois sur 2
+        )
+      )
+    }
+    // retourne un tableau d'objets (A modifier avec le bon nom)
+    return forms
+   }
+}
+
++
+NOTE: Lors de la conception, les paramétres par défaults sont soit modifiés ou supprimés selon l'element crée. +
+Aussi j'ai supprimé le fichier Javascript "Triangle" que j'avais modifié une fois le projet terminé +
+Ici seront notés seulement les partis modifiés des fichier.JS par rapport à l'exemple ci-dessus+
+
+.Assemblage des Elements
+****
+****
+
+*_Mer_* : +
+
+    ctx.beginPath
+    ctx.beginPath(); // Mer
+    ctx.fillRect(this.x + 0, this.y + 0, 1600, 50, new_y);
+    ctx.closePath()
++
+Comme l'eau est transparante, j'ai ajouté de la transparance(on peut voir une prtie du sous-marin immergé).
+Dans l'ordre de construction, celui-ci apparait en dernier  : +
+
+    const myMer = new Mer(0, 670, 0, 0, 'rgba(5,195,221,0.7)', '', 2, true, 10)
+    let max = ~~(Math.random() *0) + 1 // Le Sol est constament visible
++
+*_Lune_* : +
+Le code de ma lune +
+
+    ctx.beginPath(); //Lune
+    ctx.arc(this.x + 0, this.y + 0, 500, 0, Math.PI * 2, true);  // Lune
+    ctx.fill();
+    ctx.closePath()
+
+image::https://cdn.discordapp.com/attachments/1105886698497396797/1108142676345372852/image.png[]
++
+
+*_Sous-marin_* : +
+
+
+image::https://cdn.discordapp.com/attachments/1105886698497396797/1108135714627002410/image.png[]
+
+Pour ce faire j'ai fait des rectangles de plusieurs couleur marron foncé pour représenter la pierre avec des triangles sur leur cotés pour faire un effet de 3D.+
+
+ ctx.beginPath() //entré du sousmarin
+    ctx.lineWidth = 600;
+    ctx.lineCap = "round"
+    ctx.strokeStyle = 'yellow';
+    ctx.moveTo(this.x + 1600, this.y + 100, new_y);
+    ctx.lineTo(this.x + 1600, this.y + 470)
+    ctx.stroke()
+    ctx.closePath()
+
+    ctx.beginPath() //façade en bois
+    ctx.lineWidth = 10;
+    ctx.lineCap = "round"
+    ctx.moveTo(this.x + 1500, this.y + 530)
+    ctx.quadraticCurveTo(this.x + 1500, this.y + 50,this.x + 1400, this.y + 50)
+    ctx.quadraticCurveTo(this.x + 1400, this.y - 50,this.x + 1335, this.y - 25)
+    ctx.quadraticCurveTo(this.x + 1270, this.y - 15,this.x + 1310, this.y + 530)
+    ctx.fillStyle='#BA8C63'
+    ctx.fill()
+    ctx.closePath()
+
+    ctx.beginPath() //porte
+    ctx.lineWidth = 5;
+    ctx.fillStyle = 'black';
+    ctx.moveTo(this.x + 1400, this.y + 530)
+    ctx.quadraticCurveTo(this.x + 1400, this.y + 250,this.x + 1299, this.y + 100)
+    ctx.quadraticCurveTo(this.x + 1290, this.y + 150,this.x + 1300, this.y + 530)
+    ctx.fill()
+    ctx.strokeStyle='grey'
+    ctx.stroke()
+    ctx.closePath()
+
+    
+
+    ctx.beginPath() //barriere
+    ctx.strokeStyle = 'grey';
+    ctx.moveTo(this.x + 100, this.y + 250); // barre vertical (1er en partant de la gauche)
+    ctx.lineTo(this.x + 100, this.y + 530)
+    ctx.moveTo(this.x + 140, this.y + 250); //2eme
+    ctx.lineTo(this.x + 140, this.y + 530)
+    ctx.moveTo(this.x + 180, this.y + 250); //3eme
+    ctx.lineTo(this.x + 180, this.y + 530)
+    ctx.moveTo(this.x + 220, this.y + 250); //4eme
+    ctx.lineTo(this.x + 220, this.y + 530)
+    ctx.moveTo(this.x + 260, this.y + 250); //5eme
+    ctx.lineTo(this.x + 260, this.y + 530)
+    ctx.moveTo(this.x + 300, this.y + 250); //6eme
+    ctx.lineTo(this.x + 300, this.y + 530)
+    ctx.moveTo(this.x + 340, this.y + 250); //7eme
+    ctx.lineTo(this.x + 340, this.y + 530)
+    ctx.moveTo(this.x + 380, this.y + 250); //8eme
+    ctx.lineTo(this.x + 380, this.y + 530)
+    ctx.moveTo(this.x + 420, this.y + 250); //9eme
+    ctx.lineTo(this.x + 420, this.y + 530)
+    ctx.moveTo(this.x + 460, this.y + 250); //10
+    ctx.lineTo(this.x + 460, this.y + 530)
+    ctx.moveTo(this.x + 500, this.y + 250); //11
+    ctx.lineTo(this.x + 500, this.y + 530)
+    ctx.moveTo(this.x + 540, this.y + 250); //12
+    ctx.lineTo(this.x + 540, this.y + 530)
+    ctx.moveTo(this.x + 580, this.y + 250); //13
+    ctx.lineTo(this.x + 580, this.y + 530)
+    ctx.moveTo(this.x + 620, this.y + 250); //14
+    ctx.lineTo(this.x + 620, this.y + 530)
+    ctx.moveTo(this.x + 660, this.y + 250); //15
+    ctx.lineTo(this.x + 660, this.y + 530)
+    ctx.moveTo(this.x + 700, this.y + 250); //16
+    ctx.lineTo(this.x + 700, this.y + 530)
+    ctx.moveTo(this.x + 740, this.y + 250); //17
+    ctx.lineTo(this.x + 740, this.y + 530)
+    ctx.moveTo(this.x + 780, this.y + 250); //18
+    ctx.lineTo(this.x + 780, this.y + 530)
+    ctx.moveTo(this.x + 820, this.y + 250); //19
+    ctx.lineTo(this.x + 820, this.y + 530)
+    ctx.moveTo(this.x + 860, this.y + 250); //20
+    ctx.lineTo(this.x + 860, this.y + 530)
+    ctx.moveTo(this.x + 900, this.y + 250); //21
+    ctx.lineTo(this.x + 900, this.y + 530)
+    ctx.moveTo(this.x + 940, this.y + 250); //22
+    ctx.lineTo(this.x + 940, this.y + 530)
+    ctx.moveTo(this.x + 980, this.y + 250); //23
+    ctx.lineTo(this.x + 980, this.y + 530)
+    ctx.moveTo(this.x + 1020, this.y + 250); //24
+    ctx.lineTo(this.x + 1020, this.y + 530)
+    ctx.moveTo(this.x + 1060, this.y + 250); //25
+    ctx.lineTo(this.x + 1060, this.y + 530)
+    ctx.moveTo(this.x + 1100, this.y + 250); //26
+    ctx.lineTo(this.x + 1100, this.y + 530)
+    ctx.moveTo(this.x + 1140, this.y + 250); //27
+    ctx.lineTo(this.x + 1140, this.y + 530)
+    ctx.moveTo(this.x + 1180, this.y + 250); //28
+    ctx.lineTo(this.x + 1180, this.y + 530)
+    ctx.moveTo(this.x + 1220, this.y + 250); //29
+    ctx.lineTo(this.x + 1220, this.y + 530)
+    ctx.moveTo(this.x + 1260, this.y + 250); //30
+    ctx.lineTo(this.x + 1260, this.y + 530)
+    ctx.moveTo(this.x + 1300, this.y + 250); //31 (la 1er qui "touche" la facade en bois)
+    ctx.lineTo(this.x + 1300, this.y + 530)
+    ctx.moveTo(this.x + 1340, this.y + 250); //32
+    ctx.lineTo(this.x + 1340, this.y + 530)
+    ctx.moveTo(this.x + 1380, this.y + 250); //33
+    ctx.lineTo(this.x + 1380, this.y + 530)
+    ctx.moveTo(this.x + 1420, this.y + 250); //34
+    ctx.lineTo(this.x + 1420, this.y + 530)
+    ctx.moveTo(this.x + 1460, this.y + 250); //35
+    ctx.lineTo(this.x + 1460, this.y + 530)
+    ctx.moveTo(this.x + 1500, this.y + 250); //36
+    ctx.lineTo(this.x + 1500, this.y + 530)
+    ctx.moveTo(this.x + 1540, this.y + 250); //37
+    ctx.lineTo(this.x + 1540, this.y + 530)
+    ctx.moveTo(this.x + 1580, this.y + 250); //38
+    ctx.lineTo(this.x + 1580, this.y + 530)
+    ctx.moveTo(this.x + 1620, this.y + 250); //39 (non visible)
+    ctx.lineTo(this.x + 1620, this.y + 530)
+    ctx.stroke()
+    ctx.closePath()
+
+    ctx.beginPath() //barre horizontal
+    ctx.lineWidth = 20;
+    ctx.strokeStyle='#BF9972'
+    ctx.moveTo(this.x + 90, this.y + 250); 
+    ctx.lineTo(this.x + 1620, this.y + 250)
+    ctx.stroke()
+    ctx.closePath()
+
+    ctx.beginPath() //base sousmarin
+    ctx.lineWidth = 100;
+    ctx.strokeStyle = 'yellow';
+    ctx.moveTo(this.x + 90, this.y + 575);
+    ctx.lineTo(this.x + 1620, this.y + 575);
+    ctx.lineCap = "round"
+    ctx.stroke()
+    ctx.closePath()
+
+Le sous-marin peut bouger de [.underline]#_gauche à droite_#.
+
+
+Katana & Fruit::
++
+
+*_Katana_*: +
+
+image::https://cdn.discordapp.com/attachments/1105886698497396797/1108124230811390032/image.png[] 
+
+  ctx.moveTo(this.x + 0, this.y + 0); //Katana
+    ctx.bezierCurveTo(this.x + 0,this.y + 300,this.x + 40,this.y + 300,this.x + 40,this.y + 300,)
+    ctx.bezierCurveTo(this.x + 60,this.y + 300,this.x + 20,this.y + 300,this.x + 20,this.y + 0,)
+    ctx.fill()
+    ctx.closePath()
+
+    ctx.beginPath() // croix blache
+    ctx.rect(this.x + 9, this.y + 0, 5, 20, new_y); //1er
+    ctx.rect(this.x + 5, this.y + 3.5, 13, 10, new_y);
+    ctx.rect(this.x + 9, this.y + 50, 5, 20, new_y); //2
+    ctx.rect(this.x + 5, this.y + 53.5, 13, 10, new_y);
+    ctx.rect(this.x + 11, this.y + 100, 5, 20, new_y); //3
+    ctx.rect(this.x + 7, this.y + 103.5, 13, 10, new_y);
+    ctx.fillStyle='white'
+    ctx.fill()
+    ctx.closePath()
+    
+*_Fruit_*: +
+
+image::https://cdn.discordapp.com/attachments/1105886698497396797/1108123164665450546/image.png[] 
+
+  ctx.beginPath(); //fruit (ope ope no mi)
+    ctx.moveTo(this.x + 75, this.y + 40, new_y);
+    ctx.bezierCurveTo(this.x + 75, this.y + 37, this.x + 70, this.y + 25, this.x + 50,  this.y + 25);
+    ctx.bezierCurveTo(this.x + 20, this.y + 25, this.x + 20, this.y + 62.5, this.x + 20,  this.y + 62.5);
+    ctx.bezierCurveTo(this.x + 20, this.y + 80, this.x + 40, this.y + 102, this.x + 75,  this.y + 120);
+    ctx.bezierCurveTo(this.x + 110, this.y + 102, this.x + 130, this.y + 80, this.x + 130,  this.y + 62.5);
+    ctx.bezierCurveTo(this.x + 130, this.y + 62.5, this.x + 130, this.y + 25, this.x + 100,  this.y + 25);
+    ctx.bezierCurveTo(this.x + 85, this.y + 25, this.x + 75, this.y + 37, this.x + 75, this.y + 40);
+    ctx.fill();
+    ctx.closePath()
+
+    ctx.beginPath() //tige
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'green';
+    ctx.moveTo(this.x + 75, this.y + 39, new_y);
+    ctx.lineTo(this.x + 75, this.y + 17)
+    ctx.quadraticCurveTo(this.x + 85, this.y + 10, this.x + 105,  this.y + 17)
+    ctx.moveTo(this.x + 75, this.y + 17);
+    ctx.bezierCurveTo(this.x + 75, this.y + 17, this.x + 45,  this.y + 25, this.x + 42,  this.y + 10)
+    ctx.bezierCurveTo(this.x + 42, this.y + 1, this.x + 42, this.y + 0, this.x + 50,  this.y - 5);
+    ctx.bezierCurveTo(this.x + 50,  this.y - 5, this.x + 55, this.y - 10, this.x + 70,  this.y - 0);
+    ctx.stroke()
+    ctx.closePath()
+
+Le Katana et le fruit sont sur le sous-marin et se déplace comme lui de gauche à droite. +
+Exemple avec Katana dans le form.push : +
+
+  const myKatana  = new Katana (250, 350, 0, 0, 'black', '', 2, false, 2)
+    let max = ~~(Math.random() * 0) + 1 // Le Katana sera toujours présent 
+    let forms = []
+    for (let i = 0; i < max; i++) {
+      forms.push(
+        new Katana(
+          ~~(Math.random() * 3 * myKatana.x + 400),
+          myKatana.y + 25,
+          ~~(Math.random() * 3 * myKatana.width + 0),
+          ~~(Math.random() * myKatana.height + 10),
+          myKatana.fillColor,
+          myKatana.strokeColor,
+          '',
+        )
+      )
+    }
+
+.Conclusion
+****
+****
+Ce dessin dispose un effet de largeur grâce à la lune, la mer et le sousmarin qui ont une grande taille. +
+Tous les éléments (sauf la mer) bougent seulement de gauche à droite pour créer un mouvement. +
+Une fois ses élément ensemble, on simule une animation de navigation sur les mer.
+
+
+
+
