@@ -2,7 +2,7 @@
 
 Rédigé par : Samy le 16 mai 2020.
 
-IMPORTANT: lien github du projet : https://github.com/lenygerance/Virtual-Landscape.git[Virtual-Landscape]
+IMPORTANT: lien github du projet : https://github.com/Symresval/Virtual-Landscape.git[Virtual-Landscape]
 
 == Sommaire
 * Representation Global 
